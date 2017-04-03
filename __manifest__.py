@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'website_timesheets',
-
     'summary': 'website timesheets',
     'description': 'Website Timesheets',
     'author': 'Viktoras',
@@ -11,7 +10,6 @@
     'depends': ['base', 'invoice_time_sheet_lines'],
     'data': [
         # 'security/ir.model.access.csv',
-        'views/views.xml',
         'views/templates.xml',
     ],
 }
