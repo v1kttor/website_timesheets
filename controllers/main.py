@@ -19,17 +19,6 @@ class website_account(website_account):
         })
         return response
 
-
-class WebsiteTimesheets(http.Controller):
-
-    def _prepare_portal_layout_values(self):
-        """ prepare the values to render portal layout """
-        values = {
-            'company': request.website.company_id,
-            'user': request.env.user
-        }
-        return values
-
     @http.route(
         ['/my/my_timesheets/', '/my/my_timesheets/page/<int:page>'],
         type='http', auth='user', website=True)
@@ -63,6 +52,7 @@ class WebsiteTimesheets(http.Controller):
             'pager': pager,
             'sortings': sortings,
             'sortby': sortby,
+            'page_name': 'my_timesheets',
             'default_url': '/my/my_timesheets',
         })
         return request.render(
