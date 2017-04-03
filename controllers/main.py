@@ -4,6 +4,10 @@ from odoo import http, _
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
 
+# Zodziu ismesti details you company_id
+# Paspaudus timesheets atsidaro lists su menesiai ir savaiteim
+# tada paspaudus saveite tik tada rodo timesheetus
+# tai pat prideti total prie duration kad rodytu kiek is viso pradirbta
 
 class website_account(website_account):
 
