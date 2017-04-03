@@ -9,7 +9,6 @@ class website_account(website_account):
 
     @http.route()
     def account(self, **kw):
-        """ Add sales documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
         timesheet_count = request.env['account.analytic.line'].search_count([
@@ -25,13 +24,7 @@ class WebsiteTimesheets(http.Controller):
 
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
-        partner = request.env.user.partner_id
-        if partner.user_id:
-            sales_rep = partner.user_id
-        else:
-            sales_rep = False
         values = {
-            'sales_rep': sales_rep,
             'company': request.website.company_id,
             'user': request.env.user
         }
