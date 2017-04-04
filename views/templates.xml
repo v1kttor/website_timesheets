@@ -12,6 +12,16 @@
             </li>
         </xpath>
     </template>
+    <!-- <template id="portal_my_home_menu_timesheets"
+              name="Portal layout: Timesheets menu entry"
+              inherit_id="website_portal.portal_layout"
+              priority="28">
+        <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+            <li t-att-class="page_name == 'my_timesheets' and 'active' or ''">
+              <a href="/my/my_timesheets">Timesheets</a>
+            </li>
+        </xpath>
+    </template> -->
     <!-- My Account / Timesheets / Your Timesheets -->
     <template id="portal_my_home_timesheets"
               name="Portal My Home: Timesheets entries"
@@ -37,9 +47,21 @@
 
     <!-- My Timesheets -->
     <template id="portal_my_timesheets" name="My Timesheets">
-      <t t-call="website_portal.portal_layout">
-        <h3 class="page-header">Your Timesheets
-          <!-- Sorting -->
+      <t t-call="website.layout">
+        <!-- <t t-call="website_portal.portal_layout"> buvo pries perziura-->
+        <h3 class="page-header">Your Timesheets <a class="dropdown pull-right mr8" t-att-href="'/my/home/'">My Account</a></h3>
+        <!-- Selection -->
+        <div class="pull-left mr8">
+            <select style="width:150px;" type="text" name="week">
+            <option value="0">All weeks</option>
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+            <option value="5">Week 5</option>
+          </select>
+        </div>
+        <!-- Sorting -->
           <div class="dropdown pull-right mr8">
               <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown">
                   <span class="fa fa-sort fa-lg" />
@@ -53,20 +75,27 @@
                   </a>
                 </li>
               </ul>
+              <br/>
           </div>
-        </h3>
         <t t-if="not lines">
           <p>There are currently no timesheets for your account.</p>
         </t>
         <t t-if="lines">
+          <!-- week
+          Total -->
+          <table>
+            <tr>
+            <!-- <td>Week</td> -->
+          </tr>
+          </table>
           <table class="table table-hover">
             <thead>
               <tr class="active">
-                <th>Date</th>
-                <th>Project</th>
+                <th style="width:120px;">Date</th>
+                <th style="width:200px;">Project</th>
                 <th>Description</th>
-                <th>Is Invoiced</th>
-                <th>Duration</th>
+                <th style="width:160px;">Is Invoiced</th>
+                <th style="width:100px;">Duration</th>
               </tr>
             </thead>
             <tbody>

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import date, datetime, timedelta
 from odoo import http, _
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
@@ -8,6 +9,12 @@ from odoo.addons.website_portal.controllers.main import website_account
 # Paspaudus timesheets atsidaro lists su menesiai ir savaiteim
 # tada paspaudus saveite tik tada rodo timesheetus
 # tai pat prideti total prie duration kad rodytu kiek is viso pradirbta
+
+
+def _aal_date(line_date):
+    r = datetime.strptime(line_date, "%Y-%m-%d")
+    return (r.year, r.month, r.day)
+
 
 class website_account(website_account):
 
@@ -32,8 +39,7 @@ class website_account(website_account):
         aal = request.env['account.analytic.line']
 
         sortings = {
-            'name': {'label': _('Name'), 'order': 'name'},
-            'date': {'label': _('Newest'), 'order': 'create_date desc'},
+            'date': {'label': _('Newest'), 'order': 'date desc'},
             'is_invoiced': {
                 'label': _('Is Invoived'), 'order': 'is_invoiced desc'},
             'unit_amount': {
@@ -43,9 +49,11 @@ class website_account(website_account):
         domain = [
             ('partner_id.id', '=', partner.id),
         ]
+        # filter_domain = [('line.date', '=', filter_date)]
         # count for pager
         timesheet_count = int(aal.search_count(domain))
         lines = aal.search(domain, order=order)
+
         pager = request.website.pager(
             url="/my/my_timesheets",
             total=timesheet_count,
