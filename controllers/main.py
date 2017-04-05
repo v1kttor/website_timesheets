@@ -15,6 +15,8 @@ def _aal_date(line_date):
     r = datetime.strptime(line_date, "%Y-%m-%d")
     return (r.year, r.month, r.day)
 
+items_per_page = 20
+
 
 class website_account(website_account):
 
@@ -49,16 +51,25 @@ class website_account(website_account):
         domain = [
             ('partner_id.id', '=', partner.id),
         ]
-        # filter_domain = [('line.date', '=', filter_date)]
         # count for pager
         timesheet_count = int(aal.search_count(domain))
-        lines = aal.search(domain, order=order)
-
         pager = request.website.pager(
             url="/my/my_timesheets",
             total=timesheet_count,
             page=page,
+            step=self._items_per_page,
         )
+        lines = aal.search(
+            domain, order=order, limit=self._items_per_page,
+            offset=pager['offset']
+        )
+        for line in lines:
+            dt = datetime.strptime(line.date, "%Y-%m-%d").isocalendar()[1]
+        all_weeks = datetime.now().isocalendar()[1]
+        ls = []
+        for i in range(1, all_weeks):
+            ls.append(i)
+        list_week = len(ls)
         values.update({
             'lines': lines,
             'pager': pager,

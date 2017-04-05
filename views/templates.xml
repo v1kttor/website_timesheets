@@ -49,7 +49,7 @@
     <template id="portal_my_timesheets" name="My Timesheets">
       <t t-call="website.layout">
         <!-- <t t-call="website_portal.portal_layout"> buvo pries perziura-->
-        <h3 class="page-header">Your Timesheets <a class="dropdown pull-right mr8" t-att-href="'/my/home/'">My Account</a></h3>
+        <h3 class="page-header">Your Timesheets <a class="pull-right mr8" t-att-href="'/my/home/'">My Account</a></h3>
         <!-- Selection -->
         <div class="pull-left mr8">
             <select style="width:150px;" type="text" name="week">
@@ -61,6 +61,14 @@
             <option value="5">Week 5</option>
           </select>
         </div>
+          <div>
+            <!-- <t t-foreach="doc.member_ids.filtered('birthday').sort_by_birthday()" t-as="member"><tr><td><span t-esc="member_index + 1"/> -->
+            <select name="week" style="width:150px;">
+                <t t-foreach="ls" t-as="week">
+                    <option t-att-value="week" t-esc="week"/>
+                </t>
+            </select>
+          </div>
         <!-- Sorting -->
           <div class="dropdown pull-right mr8">
               <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown">
@@ -81,13 +89,6 @@
           <p>There are currently no timesheets for your account.</p>
         </t>
         <t t-if="lines">
-          <!-- week
-          Total -->
-          <table>
-            <tr>
-            <!-- <td>Week</td> -->
-          </tr>
-          </table>
           <table class="table table-hover">
             <thead>
               <tr class="active">
