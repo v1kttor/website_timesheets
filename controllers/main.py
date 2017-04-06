@@ -2,7 +2,7 @@
 
 from collections import OrderedDict
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from odoo import http, _
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
@@ -80,20 +80,13 @@ class website_account(website_account):
         for i in range(all_weeks, 0, -1):
             ls.append(i)
 
-        # convert week number to date
         today = date.today()
         year = today.year
-
-        # import datetime
-        # d = "2013-W26"
-        # r = datetime.datetime.strptime(d + '-0', "%Y-W%W-%w")
 
         def week_and_year(nr_week, nr_year):
             return ('%s-%s') % (nr_year, int(nr_week))
 
         ds = week_and_year(week, year)
-
-        # year_week = week_and_year(week, year)
 
         def full_date(year_and_week):
             s = datetime.strptime(ds + '-0', "%Y-%W-%w")
@@ -102,34 +95,33 @@ class website_account(website_account):
         if week:
             year_week = week_and_year(week, year)
             dt = full_date(year_week)
-            import pdb; pdb.set_trace()
-        else:
-            None
+            begining_of_the_week = dt - timedelta(days=6)
+            end_of_the_week = begining_of_the_week + timedelta(days=6)
+            # import pdb; pdb.set_trace()
 
-        wik = _aal_date(line.date).isocalendar()[1]
-        for week_number in ls:
-            week_filters.update(
-                {str(week_number): {'label': week_number,
-                                    'domain': [()]
-                                    # 'domain': [("savaites prad", '<=', 'date', '<=', "savaites pabaiga")]
-                                    }})
-        # import pdb; pdb.set_trace()
+            wik = _aal_date(line.date).isocalendar()[1]
+            for week_number in ls:
+                week_filters.update({str(week_number): {
+                    'label': week_number, 'domain': [(
+                        str(begining_of_the_week), '<=', 'date', '<=', str(end_of_the_week))]
+                }})
+    #  'domain': [("savaites prad", '<=', 'date', '<=', "savaites pabaiga")]
 
-        domain += week_filters.get(week, week_filters['all'])['domain']
-        values.update({
-            'lines': lines,
-            'pager': pager,
-            'sortings': sortings,
-            'week_filters': week_filters,
-            'sortby': sortby,
-            'week': week,
-            'page_name': 'my_timesheets',
-            'default_url': '/my/my_timesheets',
-            'ls': ls,
-            'week_n': week_n,
-            'line_dt': line_dt,
-            'aal': aal,
-            'wik': wik,
-        })
-        return request.render(
-            "website_timesheets.portal_my_timesheets", values)
+            domain += week_filters.get(week, week_filters['all'])['domain']
+            values.update({
+                'lines': lines,
+                'pager': pager,
+                'sortings': sortings,
+                'week_filters': week_filters,
+                'sortby': sortby,
+                'week': week,
+                'page_name': 'my_timesheets',
+                'default_url': '/my/my_timesheets',
+                'ls': ls,
+                'week_n': week_n,
+                'line_dt': line_dt,
+                'aal': aal,
+                'wik': wik,
+            })
+            return request.render(
+                "website_timesheets.portal_my_timesheets", values)
