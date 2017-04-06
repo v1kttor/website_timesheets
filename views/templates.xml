@@ -51,49 +51,52 @@
         <!-- <t t-call="website_portal.portal_layout"> buvo pries perziura-->
         <h3 class="page-header">Your Timesheets <a class="pull-right mr8" t-att-href="'/my/home/'">My Account</a></h3>
         <!-- Selection -->
-        <div class="pull-left mr8">
-            <select style="width:150px;" type="text" name="week">
-            <option value="0">All weeks</option>
-            <option value="1">Week 1</option>
-            <option value="2">Week 2</option>
-            <option value="3">Week 3</option>
-            <option value="4">Week 4</option>
-            <option value="5">Week 5</option>
-          </select>
-        </div>
-          <div>
-            <!-- <t t-foreach="doc.member_ids.filtered('birthday').sort_by_birthday()" t-as="member"><tr><td><span t-esc="member_index + 1"/> -->
-            <select name="week" style="width:150px;">
-                <t t-foreach="ls" t-as="week">
-                    <option t-att-value="week" t-esc="week"/>
+          <!-- <div class="dropdown pull-left mr8">
+            <select name="week" style="width:150px; margin-left:3cm;" data-toggle="dropdown">
+              <option value="0">All weeks</option>
+                <t t-foreach="ls" t-as="week_number">
+                    <option t-att-value="week_number" t-esc="week_number"/>
                 </t>
             </select>
-          </div>
-        <!-- Sorting -->
+          </div> -->
+          <!-- Sorting -->
           <div class="dropdown pull-right mr8">
-              <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown">
-                  <span class="fa fa-sort fa-lg" />
-                  <span t-esc="sortings.get(sortby, {}).get('label', 'Newest')"/>
+            <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown" style="margin-right:4.5cm;">
+              <span class="fa fa-sort fa-lg" />
+              <span t-esc="sortings.get(sortby, {}).get('label', 'Newest')"/>
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="sortby">
+              <li t-foreach="sortings" t-as="option" t-attf-class="#{sortby == option and 'active'}">
+                <a t-att-href="default_url + '?' + keep_query(sortby=option)">
+                  <span t-esc="sortings.get(option).get('label')"/>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!-- filter -->
+          <div class="dropdown pull-left mr8">
+              <button id="week_filters" class="btn btn-default" type="button" data-toggle="dropdown" style="width:150px; margin-left:3cm;">
+                  Week: <span t-esc="week_filters.get(week, {}).get('label', 'All')"/>
                   <span class="caret"></span>
               </button>
-              <ul class="dropdown-menu" aria-labelledby="sortby">
-                <li t-foreach="sortings" t-as="option" t-attf-class="#{sortby == option and 'active'}">
-                  <a t-att-href="default_url + '?' + keep_query(sortby=option)">
-                    <span t-esc="sortings.get(option).get('label')"/>
-                  </a>
-                </li>
+              <ul class="dropdown-menu" aria-labelledby="week_filters">
+                  <li t-foreach="week_filters" t-as="option" t-att-class="week == option and 'active'">
+                      <a t-attf-href="/my/my_timesheets?{{ keep_query('sortby', week=option) }}">
+                        <span t-esc="week_filters.get(option).get('label')"/></a>
+                  </li>
               </ul>
-              <br/>
           </div>
+
         <t t-if="not lines">
           <p>There are currently no timesheets for your account.</p>
         </t>
         <t t-if="lines">
-          <table class="table table-hover">
+          <table class="table table-hover" style="margin-right:4cm; margin-left:3cm; width:70%;" >  <!--width:85%; -->
             <thead>
               <tr class="active">
                 <th style="width:120px;">Date</th>
-                <th style="width:200px;">Project</th>
+                <th style="width:220px;">Project</th>
                 <th>Description</th>
                 <th style="width:160px;">Is Invoiced</th>
                 <th style="width:100px;">Duration</th>
