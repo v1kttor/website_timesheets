@@ -41,22 +41,24 @@
       <t t-call="website.layout">
         <!-- <t t-call="website_portal.portal_layout"> buvo pries perziura-->
         <h3 class="page-header">Your Timesheets <a class="pull-right mr8" t-att-href="'/my/home/'">My Account</a></h3>
+        <div class="pull-right mr8">
+          <strong style="width:150px; margin-right:2cm;">Total : <t t-esc="total_duration"/> </strong>
+        </div>
           <!-- Sorting -->
-          <div class="dropdown pull-right mr8">
-            <strong>Total : <t t-esc="total_duration"/> </strong>
+          <!-- <div class="dropdown pull-right mr8">
             <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown" style="margin-right:2cm;">
               <span class="fa fa-sort fa-lg" />
               <span t-esc="sortings.get(sortby, {}).get('label', 'Newest')"/>
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="sortby">
-              <li t-foreach="sortings" t-as="option" t-attf-class="#{sortby == option and 'active'}">
-                <a t-att-href="default_url + '?' + keep_query(sortby=option)">
-                  <span t-esc="sortings.get(option).get('label')"/>
+              <li t-foreach="sortings" t-as="opt" t-attf-class="#{sortby == opt and 'active'}">
+                <a t-att-href="default_url + '?' + keep_query('sortby')">
+                  <span t-esc="sortings.get(opt).get('label')"/>
                 </a>
               </li>
             </ul>
-          </div>
+          </div> -->
           <!-- filter -->
           <div class="dropdown pull-left mr8">
               <button id="week_filters" class="btn btn-default" type="button" data-toggle="dropdown" style="width:150px; margin-left:3cm;">

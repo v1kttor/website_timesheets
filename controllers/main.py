@@ -7,8 +7,6 @@ from odoo import http, _
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
 
-# tai pat prideti total prie duration kad rodytu kiek is viso pradirbta
-
 
 def _aal_date(line_date):
     r = datetime.strptime(line_date, "%Y-%m-%d")
@@ -55,18 +53,19 @@ class website_account(website_account):
         today = date.today()
         year = today.year
 
-        sortings = {
-            'date': {'label': _('Newest'), 'order': 'date desc'},
-            'is_invoiced': {
-                'label': _('Is Invoived'), 'order': 'is_invoiced desc'},
-            'unit_amount': {
-                'label': _('Duration'), 'order': 'unit_amount desc'},
-        }
-
-        order = sortings.get(sortby, sortings['date'])['order']
+        # sortings = {
+        #     'date': {'label': _('Newest'), 'order': 'date desc'},
+        #     'is_invoiced': {
+        #         'label': _('Is Invoived'), 'order': 'is_invoiced desc'},
+        #     'unit_amount': {
+        #         'label': _('Duration'), 'order': 'unit_amount desc'},
+        # }
+        #
+        # order = sortings.get(sortby, sortings['date'])['order']
         pager = request.website.pager(
             url="/my/my_timesheets",
-            url_args={'sortby': sortby, 'week': week},
+            url_args={'week': week},
+            # url_args={'sortby': sortby, 'week': week},
             total=timesheet_count,
             page=page,
             step=self._items_per_page,
@@ -89,9 +88,6 @@ class website_account(website_account):
                     week_filters.update({str(week_number): {
                         'label': week_number, 'domain': []
                     }})
-                    # week_filters.update({
-                    #     'all': {'label': _('All'), 'domain': []},
-                    # })
             else:
                 if week != ('all'):
                     year_week = _week_and_year(str(week), year)
@@ -108,13 +104,13 @@ class website_account(website_account):
         domain += week_filters.get(week, week_filters['all'])['domain']
 
         lines = aal.search(
-            domain, order=order, limit=self._items_per_page,
-            offset=pager['offset']
+            domain, limit=self._items_per_page,
+            offset=pager['offset']  # order=order,
         )
         values.update({
             'lines': lines,
             'pager': pager,
-            'sortings': sortings,
+            # 'sortings': sortings,
             'week_filters': week_filters,
             'sortby': sortby,
             'week': week,
