@@ -7,11 +7,7 @@ from odoo import http, _
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
 
-# tada paspaudus saveite, rodo timesheetus tos savaites
 # tai pat prideti total prie duration kad rodytu kiek is viso pradirbta
-
-# naujas
-# week defaultine turetu but naujausia week
 
 
 def _aal_date(line_date):
@@ -19,6 +15,15 @@ def _aal_date(line_date):
     return date(r.year, r.month, r.day)
 
 items_per_page = 20
+
+
+def _week_and_year(nr_week, nr_year):
+    return ('%s-%s') % (nr_year, int(nr_week))
+
+
+def _full_date(year_and_week):
+    s = datetime.strptime(year_and_week + '-0', "%Y-%W-%w")
+    return date(s.year, s.month, s.day)
 
 
 class website_account(website_account):
@@ -52,6 +57,7 @@ class website_account(website_account):
         }
         order = sortings.get(sortby, sortings['date'])['order']
         domain = [('partner_id.id', '=', partner.id)]
+
         # count for pager
         timesheet_count = int(aal.search_count(domain))
         pager = request.website.pager(
@@ -61,19 +67,12 @@ class website_account(website_account):
             page=page,
             step=self._items_per_page,
         )
-        lines = aal.search(
-            domain, order=order, limit=self._items_per_page,
-            offset=pager['offset']
-        )
+
         week_filters = OrderedDict({
             'all': {'label': _('All'), 'domain': []},
         })
 
-        # Line week
-        for line in lines:
-            line_dt = _aal_date(line.date)  # is stringo i data
-            week_n = line_dt.isocalendar()[1]  # eilutes savaite
-        all_weeks = datetime.now().isocalendar()[1]  # dabartine savaite pvz 13
+        all_weeks = datetime.now().isocalendar()[1]
 
         # All weeks
         ls = []
@@ -83,31 +82,25 @@ class website_account(website_account):
         today = date.today()
         year = today.year
 
-        def week_and_year(nr_week, nr_year):
-            return ('%s-%s') % (nr_year, int(nr_week))
-
-        ds = week_and_year(week, year)
-
-        def full_date(year_and_week):
-            s = datetime.strptime(ds + '-0', "%Y-%W-%w")
-            return date(s.year, s.month, s.day)
-
         if week:
-            year_week = week_and_year(week, year)
-            dt = full_date(year_week)
+            year_week = _week_and_year(week, year)
+            dt = _full_date(year_week)
             begining_of_the_week = dt - timedelta(days=6)
             end_of_the_week = begining_of_the_week + timedelta(days=6)
-            # import pdb; pdb.set_trace()
 
-            wik = _aal_date(line.date).isocalendar()[1]
             for week_number in ls:
                 week_filters.update({str(week_number): {
-                    'label': week_number, 'domain': [(
-                        str(begining_of_the_week), '<=', 'date', '<=', str(end_of_the_week))]
+                    'label': week_number, 'domain': [
+                        ('date',  '>=', str(begining_of_the_week)),
+                        ('date', '<=', str(end_of_the_week))]
                 }})
-    #  'domain': [("savaites prad", '<=', 'date', '<=', "savaites pabaiga")]
 
             domain += week_filters.get(week, week_filters['all'])['domain']
+
+            lines = aal.search(
+                domain, order=order, limit=self._items_per_page,
+                offset=pager['offset']
+            )
             values.update({
                 'lines': lines,
                 'pager': pager,
@@ -118,10 +111,7 @@ class website_account(website_account):
                 'page_name': 'my_timesheets',
                 'default_url': '/my/my_timesheets',
                 'ls': ls,
-                'week_n': week_n,
-                'line_dt': line_dt,
                 'aal': aal,
-                'wik': wik,
             })
             return request.render(
                 "website_timesheets.portal_my_timesheets", values)
