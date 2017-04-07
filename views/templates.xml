@@ -8,20 +8,11 @@
               priority="28">
         <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
             <li t-att-class="page_name == 'my_timesheets' and 'active' or ''">
-              <a href="/my/my_timesheets">Timesheets</a>
+              <a href="/my/my_timesheets/">Timesheets</a>
             </li>
         </xpath>
     </template>
-    <!-- <template id="portal_my_home_menu_timesheets"
-              name="Portal layout: Timesheets menu entry"
-              inherit_id="website_portal.portal_layout"
-              priority="28">
-        <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-            <li t-att-class="page_name == 'my_timesheets' and 'active' or ''">
-              <a href="/my/my_timesheets">Timesheets</a>
-            </li>
-        </xpath>
-    </template> -->
+
     <!-- My Account / Timesheets / Your Timesheets -->
     <template id="portal_my_home_timesheets"
               name="Portal My Home: Timesheets entries"
@@ -29,7 +20,7 @@
               priority="28">
         <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
             <h3 class="page-header">
-              <a href="/my/my_timesheets">Your Timesheets
+              <a href="/my/my_timesheets/">Your Timesheets
                 <small class="ml8">
                   <t t-if="timesheet_count">
                     <span class='badge'>
@@ -50,18 +41,10 @@
       <t t-call="website.layout">
         <!-- <t t-call="website_portal.portal_layout"> buvo pries perziura-->
         <h3 class="page-header">Your Timesheets <a class="pull-right mr8" t-att-href="'/my/home/'">My Account</a></h3>
-        <!-- Selection -->
-          <!-- <div class="dropdown pull-left mr8">
-            <select name="week" style="width:150px; margin-left:3cm;" data-toggle="dropdown">
-              <option value="0">All weeks</option>
-                <t t-foreach="ls" t-as="week_number">
-                    <option t-att-value="week_number" t-esc="week_number"/>
-                </t>
-            </select>
-          </div> -->
           <!-- Sorting -->
           <div class="dropdown pull-right mr8">
-            <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown" style="margin-right:4.5cm;">
+            <strong>Total : <t t-esc="total_duration"/> </strong>
+            <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown" style="margin-right:2cm;">
               <span class="fa fa-sort fa-lg" />
               <span t-esc="sortings.get(sortby, {}).get('label', 'Newest')"/>
               <span class="caret"></span>
@@ -92,7 +75,7 @@
           <p>There are currently no timesheets for your account.</p>
         </t>
         <t t-if="lines">
-          <table class="table table-hover" style="margin-right:4cm; margin-left:3cm; width:70%;" >  <!--width:85%; -->
+          <table class="table table-hover" style="margin-right:4cm; margin-left:3cm; width:90%;" >  <!--width:85%; -->
             <thead>
               <tr class="active">
                 <th style="width:120px;">Date</th>
@@ -100,6 +83,7 @@
                 <th>Description</th>
                 <th style="width:160px;">Is Invoiced</th>
                 <th style="width:100px;">Duration</th>
+                <!-- <th style="width:100px;">Total</th> -->
               </tr>
             </thead>
             <tbody>

@@ -14,16 +14,17 @@ def _aal_date(line_date):
     r = datetime.strptime(line_date, "%Y-%m-%d")
     return date(r.year, r.month, r.day)
 
-items_per_page = 20
-
 
 def _week_and_year(nr_week, nr_year):
-    return ('%s-%s') % (nr_year, int(nr_week))
+    nr_week = int(nr_week)
+    return ('%s-%s') % (nr_year, nr_week)
 
 
 def _full_date(year_and_week):
     s = datetime.strptime(year_and_week + '-0', "%Y-%W-%w")
     return date(s.year, s.month, s.day)
+
+items_per_page = 20
 
 
 class website_account(website_account):
@@ -48,6 +49,12 @@ class website_account(website_account):
         partner = request.env.user.partner_id
         aal = request.env['account.analytic.line']
 
+        all_weeks = datetime.now().isocalendar()[1]
+        domain = [('partner_id.id', '=', partner.id)]
+        timesheet_count = int(aal.search_count(domain))
+        today = date.today()
+        year = today.year
+
         sortings = {
             'date': {'label': _('Newest'), 'order': 'date desc'},
             'is_invoiced': {
@@ -55,11 +62,8 @@ class website_account(website_account):
             'unit_amount': {
                 'label': _('Duration'), 'order': 'unit_amount desc'},
         }
-        order = sortings.get(sortby, sortings['date'])['order']
-        domain = [('partner_id.id', '=', partner.id)]
 
-        # count for pager
-        timesheet_count = int(aal.search_count(domain))
+        order = sortings.get(sortby, sortings['date'])['order']
         pager = request.website.pager(
             url="/my/my_timesheets",
             url_args={'sortby': sortby, 'week': week},
@@ -67,51 +71,55 @@ class website_account(website_account):
             page=page,
             step=self._items_per_page,
         )
-
         week_filters = OrderedDict({
             'all': {'label': _('All'), 'domain': []},
         })
 
-        all_weeks = datetime.now().isocalendar()[1]
-
-        # All weeks
         ls = []
         for i in range(all_weeks, 0, -1):
             ls.append(i)
 
-        today = date.today()
-        year = today.year
-
-        if week:
-            year_week = _week_and_year(week, year)
-            dt = _full_date(year_week)
-            begining_of_the_week = dt - timedelta(days=6)
-            end_of_the_week = begining_of_the_week + timedelta(days=6)
-
-            for week_number in ls:
+        for week_number in ls:
                 week_filters.update({str(week_number): {
-                    'label': week_number, 'domain': [
-                        ('date',  '>=', str(begining_of_the_week)),
-                        ('date', '<=', str(end_of_the_week))]
+                    'label': week_number, 'domain': [()]
                 }})
+        if week:
+            if str(week) is ('all'):
+                for week_number in ls:
+                        week_filters.update({str(week_number): {
+                            'label': week_number, 'domain': []
+                        }})
+            else:
+                year_week = _week_and_year(week, year)
+                dt = _full_date(year_week)
+                begining_of_the_week = dt - timedelta(days=6)
+                end_of_the_week = begining_of_the_week + timedelta(days=6)
 
-            domain += week_filters.get(week, week_filters['all'])['domain']
+                for week_number in ls:
+                    week_filters.update({str(week_number): {
+                        'label': week_number, 'domain': [
+                            ('date',  '>=', str(begining_of_the_week)),
+                            ('date', '<=', str(end_of_the_week))]
+                    }})
+        domain += week_filters.get(week, week_filters['all'])['domain']
 
-            lines = aal.search(
-                domain, order=order, limit=self._items_per_page,
-                offset=pager['offset']
-            )
-            values.update({
-                'lines': lines,
-                'pager': pager,
-                'sortings': sortings,
-                'week_filters': week_filters,
-                'sortby': sortby,
-                'week': week,
-                'page_name': 'my_timesheets',
-                'default_url': '/my/my_timesheets',
-                'ls': ls,
-                'aal': aal,
-            })
-            return request.render(
-                "website_timesheets.portal_my_timesheets", values)
+        lines = aal.search(
+            domain, order=order, limit=self._items_per_page,
+            offset=pager['offset']
+        )
+        values.update({
+            'lines': lines,
+            'pager': pager,
+            'sortings': sortings,
+            'week_filters': week_filters,
+            'sortby': sortby,
+            'week': week,
+            'page_name': 'my_timesheets',
+            'default_url': '/my_timesheets',
+            'ls': ls,
+            'aal': aal,
+            'total_duration': sum(lines.mapped('unit_amount'))
+        })
+
+        return request.render(
+            "website_timesheets.portal_my_timesheets", values)
