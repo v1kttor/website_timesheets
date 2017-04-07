@@ -81,26 +81,30 @@ class website_account(website_account):
 
         for week_number in ls:
                 week_filters.update({str(week_number): {
-                    'label': week_number, 'domain': [()]
+                    'label': week_number, 'domain': []
                 }})
         if week:
             if str(week) is ('all'):
                 for week_number in ls:
-                        week_filters.update({str(week_number): {
-                            'label': week_number, 'domain': []
-                        }})
-            else:
-                year_week = _week_and_year(week, year)
-                dt = _full_date(year_week)
-                begining_of_the_week = dt - timedelta(days=6)
-                end_of_the_week = begining_of_the_week + timedelta(days=6)
-
-                for week_number in ls:
                     week_filters.update({str(week_number): {
-                        'label': week_number, 'domain': [
-                            ('date',  '>=', str(begining_of_the_week)),
-                            ('date', '<=', str(end_of_the_week))]
+                        'label': week_number, 'domain': []
                     }})
+                    # week_filters.update({
+                    #     'all': {'label': _('All'), 'domain': []},
+                    # })
+            else:
+                if week != ('all'):
+                    year_week = _week_and_year(str(week), year)
+                    dt = _full_date(year_week)
+                    begining_of_the_week = dt - timedelta(days=6)
+                    end_of_the_week = begining_of_the_week + timedelta(days=6)
+
+                    for week_number in ls:
+                        week_filters.update({str(week_number): {
+                            'label': week_number, 'domain': [
+                                ('date',  '>=', str(begining_of_the_week)),
+                                ('date', '<=', str(end_of_the_week))]
+                        }})
         domain += week_filters.get(week, week_filters['all'])['domain']
 
         lines = aal.search(
