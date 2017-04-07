@@ -7,6 +7,13 @@ from odoo import http, _
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
 
+# Gal net susikurt nauja moduli
+# ir ten padaryt viska kaip cia tik ,
+# padaryt javascript date pickeri kur leistu pasirinkti date_last_stage_update
+# esu uz bookmarkines
+# o nauaj daryti nes tas geras,
+# isisaugot ir daryt normalu tik ne su savaitem o su DATE pickeriu ir js
+
 
 def _aal_date(line_date):
     r = datetime.strptime(line_date, "%Y-%m-%d")

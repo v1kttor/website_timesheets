@@ -85,7 +85,6 @@
                 <th>Description</th>
                 <th style="width:160px;">Is Invoiced</th>
                 <th style="width:100px;">Duration</th>
-                <!-- <th style="width:100px;">Total</th> -->
               </tr>
             </thead>
             <tbody>
