@@ -7,13 +7,6 @@ from odoo import http, _
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
 
-# Gal net susikurt nauja moduli
-# ir ten padaryt viska kaip cia tik ,
-# padaryt javascript date pickeri kur leistu pasirinkti date_last_stage_update
-# esu uz bookmarkines
-# o nauaj daryti nes tas geras,
-# isisaugot ir daryt normalu tik ne su savaitem o su DATE pickeriu ir js
-
 
 def _aal_date(line_date):
     r = datetime.strptime(line_date, "%Y-%m-%d")
@@ -28,6 +21,7 @@ def _week_and_year(nr_week, nr_year):
 def _full_date(year_and_week):
     s = datetime.strptime(year_and_week + '-0', "%Y-%W-%w")
     return date(s.year, s.month, s.day)
+
 
 items_per_page = 20
 
@@ -59,20 +53,9 @@ class website_account(website_account):
         timesheet_count = int(aal.search_count(domain))
         today = date.today()
         year = today.year
-
-        # sortings = {
-        #     'date': {'label': _('Newest'), 'order': 'date desc'},
-        #     'is_invoiced': {
-        #         'label': _('Is Invoived'), 'order': 'is_invoiced desc'},
-        #     'unit_amount': {
-        #         'label': _('Duration'), 'order': 'unit_amount desc'},
-        # }
-        #
-        # order = sortings.get(sortby, sortings['date'])['order']
         pager = request.website.pager(
             url="/my/my_timesheets",
             url_args={'week': week},
-            # url_args={'sortby': sortby, 'week': week},
             total=timesheet_count,
             page=page,
             step=self._items_per_page,
@@ -112,12 +95,11 @@ class website_account(website_account):
 
         lines = aal.search(
             domain, limit=self._items_per_page,
-            offset=pager['offset']  # order=order,
+            offset=pager['offset']
         )
         values.update({
             'lines': lines,
             'pager': pager,
-            # 'sortings': sortings,
             'week_filters': week_filters,
             'sortby': sortby,
             'week': week,

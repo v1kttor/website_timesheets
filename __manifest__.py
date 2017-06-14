@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'website_timesheets',
-    'summary': 'website timesheets',
-    'description': 'Website Timesheets',
-    'author': 'Viktoras',
-    'website': "http://www.yourcompany.com",
+    'name': 'Website Timesheets',
+    'summary': 'Website timesheets with week number option',
+    'author': 'Viktoras Norkus',
     'category': 'website',
     'version': '10.0.0.1',
     'depends': ['base', 'invoice_time_sheet_lines'],
-    'data': [
-        # 'security/ir.model.access.csv',
-        'views/templates.xml',
-    ],
+    'data': ['views/templates.xml'],
 }

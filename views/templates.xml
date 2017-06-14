@@ -1,125 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <odoo>
-    <!-- Timesheets button in My Account -->
-    <template id="portal_my_home_menu_timesheets"
-              name="Portal layout: Timesheets menu entry"
-              inherit_id="website_portal.portal_layout"
-              priority="28">
-        <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-            <li t-att-class="page_name == 'my_timesheets' and 'active' or ''">
-              <a href="/my/my_timesheets/">Timesheets</a>
-            </li>
-        </xpath>
-    </template>
 
-    <!-- My Account / Timesheets / Your Timesheets -->
-    <template id="portal_my_home_timesheets"
-              name="Portal My Home: Timesheets entries"
-              inherit_id="website_portal.portal_my_home"
-              priority="28">
-        <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
-            <h3 class="page-header">
-              <a href="/my/my_timesheets/">Your Timesheets
+<!-- Timesheets button in My Account -->
+<template id="portal_my_home_menu_timesheets" name="Portal layout: Timesheets menu entry" inherit_id="website_portal.portal_layout" priority="28">
+    <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+        <li t-att-class="page_name == 'my_timesheets' and 'active' or ''">
+            <a href="/my/my_timesheets/">Timesheets</a>
+        </li>
+    </xpath>
+</template>
+
+<!-- My Account / Timesheets / Your Timesheets -->
+<template id="portal_my_home_timesheets" name="Portal My Home: Timesheets entries" inherit_id="website_portal.portal_my_home" priority="28">
+    <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+        <h3 class="page-header">
+            <a href="/my/my_timesheets/">Your Timesheets
                 <small class="ml8">
-                  <t t-if="timesheet_count">
-                    <span class='badge'>
-                      <t t-esc="timesheet_count"/>
-                    </span>
-                  </t>
-                  <t t-if="not timesheet_count">
-                      There are currently no timesheets for your account.
-                  </t>
-                  </small>
-                </a>
-            </h3>
-        </xpath>
-    </template>
+                    <t t-if="timesheet_count">
+                        <span class='badge'>
+                            <t t-esc="timesheet_count"/>
+                        </span>
+                    </t>
+                    <t t-if="not timesheet_count">
+                        There are currently no timesheets for your account.
+                    </t>
+                </small>
+            </a>
+        </h3>
+    </xpath>
+</template>
 
-    <!-- My Timesheets -->
-    <template id="portal_my_timesheets" name="My Timesheets">
-      <t t-call="website.layout">
-        <!-- <t t-call="website_portal.portal_layout"> buvo pries perziura-->
-        <h3 class="page-header">Your Timesheets <a class="pull-right mr8" t-att-href="'/my/home/'">My Account</a></h3>
+<!-- My Timesheets -->
+<template id="portal_my_timesheets" name="My Timesheets">
+    <t t-call="website.layout">
+        <h3 class="page-header">Your Timesheets
+            <a class="pull-right mr8" t-att-href="'/my/home/'">My Account</a>
+        </h3>
         <div class="pull-right mr8">
-          <strong style="width:150px; margin-right:2cm;">Total : <t t-esc="total_duration"/> </strong>
+            <strong style="width:150px; margin-right:2cm;">Total :
+                <t t-esc="total_duration"/>
+            </strong>
         </div>
-          <!-- Sorting -->
-          <!-- <div class="dropdown pull-right mr8">
-            <button id="sortby" class="btn btn-default" type="button" data-toggle="dropdown" style="margin-right:2cm;">
-              <span class="fa fa-sort fa-lg" />
-              <span t-esc="sortings.get(sortby, {}).get('label', 'Newest')"/>
-              <span class="caret"></span>
+        <div class="dropdown pull-left mr8">
+            <button id="week_filters" class="btn btn-default" type="button" data-toggle="dropdown" style="width:150px; margin-left:3cm;">
+                Week:
+                <span t-esc="week_filters.get(week, {}).get('label', 'All')"/>
+                <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" aria-labelledby="sortby">
-              <li t-foreach="sortings" t-as="opt" t-attf-class="#{sortby == opt and 'active'}">
-                <a t-att-href="default_url + '?' + keep_query('sortby')">
-                  <span t-esc="sortings.get(opt).get('label')"/>
-                </a>
-              </li>
-            </ul>
-          </div> -->
-          <!-- filter -->
-          <div class="dropdown pull-left mr8">
-              <button id="week_filters" class="btn btn-default" type="button" data-toggle="dropdown" style="width:150px; margin-left:3cm;">
-                  Week: <span t-esc="week_filters.get(week, {}).get('label', 'All')"/>
-                  <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="week_filters">
-                  <li t-foreach="week_filters" t-as="option" t-att-class="week == option and 'active'">
-                      <a t-attf-href="/my/my_timesheets?{{ keep_query('sortby', week=option) }}">
+            <ul class="dropdown-menu" aria-labelledby="week_filters">
+                <li t-foreach="week_filters" t-as="option" t-att-class="week == option and 'active'">
+                    <a t-attf-href="/my/my_timesheets?{{ keep_query('sortby', week=option) }}">
                         <span t-esc="week_filters.get(option).get('label')"/></a>
-                  </li>
-              </ul>
-          </div>
+                </li>
+            </ul>
+        </div>
 
         <t t-if="not lines">
-          <p>There are currently no timesheets for your account.</p>
+            <p>There are currently no timesheets for your account.</p>
         </t>
         <t t-if="lines">
-          <table class="table table-hover" style="margin-right:4cm; margin-left:3cm; width:90%;" >  <!--width:85%; -->
-            <thead>
-              <tr class="active">
-                <th style="width:120px;">Date</th>
-                <th style="width:220px;">Project</th>
-                <th>Description</th>
-                <th style="width:160px;">Is Invoiced</th>
-                <th style="width:100px;">Duration</th>
-              </tr>
-            </thead>
-            <tbody>
-            <t t-foreach="lines" t-as="line">
-              <tr>
-                <td><span t-field="line.date"/></td>
-                <td><span t-field="line.project_id"/></td>
-                <td><span t-field="line.name"/></td>
-                <td>
-                <t t-if="line.is_invoiced == True">
-                    <span>
-                      <i class="fa fa-fw fa-check"/>
-                      <a t-att-href="'/report/pdf/account.report_invoice/'+str(line.invoice_line_id.invoice_id.id)"
-                         t-att-title="line.invoice_line_id.invoice_id.number"
-                         target="_blank">
-                        <t t-esc="line.invoice_line_id.invoice_id.number"/>
-                      </a>
-                    </span>
-                </t>
-                <t t-if="line.is_invoiced == False">
-                  <span class="label label-default"></span>
-                </t>
-              </td>
-                <td>
-                  <span t-field="line.unit_amount"/>
-                </td>
-              </tr>
-            </t>
-          </tbody>
-          </table>
-          <div t-if="pager" class="o_portal_pager text-center">
-              <t t-call="website.pager"/>
+            <table class="table table-hover" style="margin-right:4cm; margin-left:3cm; width:90%;">
+                <thead>
+                    <tr class="active">
+                        <th style="width:120px;">Date</th>
+                        <th style="width:220px;">Project</th>
+                        <th>Description</th>
+                        <th style="width:160px;">Is Invoiced</th>
+                        <th style="width:100px;">Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="lines" t-as="line">
+                        <tr>
+                            <td><span t-field="line.date"/></td>
+                            <td><span t-field="line.project_id"/></td>
+                            <td><span t-field="line.name"/></td>
+                            <td>
+                                <t t-if="line.is_invoiced == True">
+                                    <span>
+                                        <i class="fa fa-fw fa-check"/>
+                                        <a t-att-href="'/report/pdf/account.report_invoice/'+str(line.invoice_line_id.invoice_id.id)" t-att-title="line.invoice_line_id.invoice_id.number" target="_blank">
+                                            <t t-esc="line.invoice_line_id.invoice_id.number"/>
+                                        </a>
+                                    </span>
+                                </t>
+                                <t t-if="line.is_invoiced == False">
+                                    <span class="label label-default"></span>
+                                </t>
+                            </td>
+                            <td>
+                                <span t-field="line.unit_amount"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+            <div t-if="pager" class="o_portal_pager text-center">
+                <t t-call="website.pager"/>
             </div>
         </t>
-      </t>
-    </template>
+    </t>
+</template>
 
 </odoo>
